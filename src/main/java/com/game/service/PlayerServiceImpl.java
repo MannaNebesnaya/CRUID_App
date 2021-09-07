@@ -28,8 +28,7 @@ public class PlayerServiceImpl implements PlayerService {
     @Override
     public List<Player> getAllSortedPlayer(String name, String title, Race race, Profession profession, Long after,
                                            Long before, Boolean banned, Integer minExperience, Integer maxExperience,
-                                           Integer minLevel, Integer maxLevel, PlayerOrder order,
-                                           Integer pageNumber, Integer pageSize) {
+                                           Integer minLevel, Integer maxLevel) {
 
 
         List<Player> allPlayerFilterList = playerRepository.findAll();
@@ -100,17 +99,22 @@ public class PlayerServiceImpl implements PlayerService {
                     .collect(Collectors.toList());
         }
 
-        //кол-во игроков на отображении
+        return allPlayerFilterList;
+    }
+
+
+    @Override
+    public List<Player> ApplyFilterListPlayer(List<Player> playerList, PlayerOrder order,
+                                              Integer pageNumber, Integer pageSize) {
+
         if (pageNumber == null) pageNumber = 0;
         if (pageSize == null) pageSize = 3;
 
-        allPlayerFilterList = allPlayerFilterList.stream()
+        return playerList.stream()
                 .sorted(comparator(order))
                 .skip((long) pageNumber * pageSize)
                 .limit(pageSize)
                 .collect(Collectors.toList());
-
-        return allPlayerFilterList;
     }
 
     @Override
@@ -122,8 +126,14 @@ public class PlayerServiceImpl implements PlayerService {
         return playerRepository.findById(id).orElse(null);
     }
 
+    @Override
+    public void deletePlayer(Long id) {
+        if (!isValidId(id)) throw new BadRequestException();
+        if (!playerRepository.existsById(id)) throw new NotFoundException();
+        playerRepository.deleteById(id);
+    }
 
-//    !! ====== Вспомогательные методы ====== !!
+    //    !! ====== Вспомогательные методы ====== !!
 
     //    Реализация компаратора для сортировки отображения
 //    Странно, что в order'e есть ещё level, а на странице его нельзя выбрать

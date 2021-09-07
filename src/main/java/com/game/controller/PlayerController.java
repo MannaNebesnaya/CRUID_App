@@ -37,10 +37,10 @@ public class PlayerController {
                                            @RequestParam(required = false) Integer pageNumber,
                                            @RequestParam(required = false) Integer pageSize) {
 
-       List<Player> allPlayerList = playerService.getAllSortedPlayer(name, title, race, profession, after, before, banned, minExperience,
-                maxExperience, minLevel, maxLevel, order, pageNumber, pageSize);
-
-        return allPlayerList;
+         List< Player> sortedPlayers = playerService.getAllSortedPlayer(name, title, race, profession,after, before,
+                banned, minExperience, maxExperience, minLevel,
+                maxLevel);
+        return playerService.ApplyFilterListPlayer(sortedPlayers, order, pageNumber, pageSize);
     }
 
     @GetMapping("/count")
@@ -56,8 +56,9 @@ public class PlayerController {
                                       @RequestParam(required = false) Integer minLevel,
                                       @RequestParam(required = false) Integer maxLevel) {
 
-        return 0;
-
+        return playerService.getAllSortedPlayer(name, title, race, profession,
+                after, before, banned, minExperience,
+                maxExperience, minLevel, maxLevel).size();
     }
 
     @GetMapping("/{id}")
@@ -79,6 +80,6 @@ public class PlayerController {
 
     @DeleteMapping("/{id}")
     public void deletePlayer(@PathVariable Long id) {
-
+        playerService.deletePlayer(id);
     }
 }

@@ -19,11 +19,17 @@ public interface PlayerService {
 
     List<Player> getAllSortedPlayer(String name, String title, Race race, Profession profession,
                                     Long after, Long before, Boolean banned, Integer minExperience,
-                                    Integer maxExperience, Integer minLevel, Integer maxLevel, PlayerOrder order,
-                                    Integer pageNumber, Integer pageSize);
+                                    Integer maxExperience, Integer minLevel, Integer maxLevel);
 
 
     // Получить игрока по id
     Player getPlayer(@PathVariable Long id);
+
+    List<Player> ApplyFilterListPlayer(List<Player> playerList,PlayerOrder order,
+                                       Integer pageNumber, Integer pageSize);
+
+    void deletePlayer(Long id);
+
+
 
 }
