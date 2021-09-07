@@ -4,17 +4,22 @@ package com.game.controller;
 import com.game.entity.Player;
 import com.game.entity.Profession;
 import com.game.entity.Race;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import com.game.service.PlayerServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 // Совмещает в себе @Controller и @ResponseBody
 @RestController
-@RequestMapping("rest/players/")
+@RequestMapping("/rest/players")
 public class PlayerController {
+    private PlayerServiceImpl playerService;
+
+    @Autowired
+    public PlayerController(PlayerServiceImpl playerService) {
+        this.playerService = playerService;
+    }
 
     @GetMapping
     public List<Player> getAllSortedPlayer(@RequestParam(required = false) String name,
@@ -32,7 +37,7 @@ public class PlayerController {
                                            @RequestParam(required = false) Integer pageNumber,
                                            @RequestParam(required = false) Integer pageSize) {
 
-        return null;
+        return playerService.getAllSortedPlayer();
     }
 
     @GetMapping("/count")
@@ -49,6 +54,30 @@ public class PlayerController {
                                       @RequestParam(required = false) Integer maxLevel) {
 
         return 0;
+
+    }
+
+    @GetMapping("/{id}")
+    public Player getPlayer(@PathVariable Long id) {
+
+
+        return null;
+    }
+
+    @PostMapping
+    @ResponseBody
+    public Player createPlayer(@RequestBody Player newPlayer) {
+        return null;
+    }
+
+    @PostMapping("/{id}")
+    @ResponseBody
+    public Player updatePlayer(@RequestParam Player updatePlayer,  @PathVariable Long id ) {
+        return null;
+    }
+
+    @DeleteMapping("/{id}")
+    public void deletePlayer(@PathVariable Long id) {
 
     }
 }
