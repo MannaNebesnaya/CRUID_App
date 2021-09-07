@@ -69,7 +69,7 @@ public class PlayerController {
     @PostMapping
     @ResponseBody
     public Player createPlayer(@RequestBody Player newPlayer) {
-        return null;
+       return playerService.createPlayer(newPlayer);
     }
 
     @PostMapping("/{id}")

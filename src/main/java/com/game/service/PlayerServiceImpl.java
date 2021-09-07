@@ -10,6 +10,7 @@ import com.game.repository.PlayerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -104,17 +105,13 @@ public class PlayerServiceImpl implements PlayerService {
 
 
     @Override
-    public List<Player> ApplyFilterListPlayer(List<Player> playerList, PlayerOrder order,
-                                              Integer pageNumber, Integer pageSize) {
+    public Player createPlayer(Player newPlayer) {
 
-        if (pageNumber == null) pageNumber = 0;
-        if (pageSize == null) pageSize = 3;
+        if (!isValidDataCreatePlayer(newPlayer)) throw new BadRequestException();
 
-        return playerList.stream()
-                .sorted(comparator(order))
-                .skip((long) pageNumber * pageSize)
-                .limit(pageSize)
-                .collect(Collectors.toList());
+        newPlayer.setLevel(calculateLevel(newPlayer.getExperience()));
+        newPlayer.setUntilNextLevel(calculateUntilNextLevel(newPlayer.getLevel(), newPlayer.getExperience()));
+        return playerRepository.save(newPlayer);
     }
 
     @Override
@@ -133,10 +130,23 @@ public class PlayerServiceImpl implements PlayerService {
         playerRepository.deleteById(id);
     }
 
+    @Override
+    public List<Player> ApplyFilterListPlayer(List<Player> playerList, PlayerOrder order,
+                                              Integer pageNumber, Integer pageSize) {
+
+        if (pageNumber == null) pageNumber = 0;
+        if (pageSize == null) pageSize = 3;
+
+        return playerList.stream()
+                .sorted(comparator(order))
+                .skip((long) pageNumber * pageSize)
+                .limit(pageSize)
+                .collect(Collectors.toList());
+    }
+
     //    !! ====== Вспомогательные методы ====== !!
 
-    //    Реализация компаратора для сортировки отображения
-//    Странно, что в order'e есть ещё level, а на странице его нельзя выбрать
+    //    Реализация компаратора
     private Comparator<Player> comparator(PlayerOrder order) {
         if (order == null) {
             return Comparator.comparing(Player::getId);
@@ -161,10 +171,47 @@ public class PlayerServiceImpl implements PlayerService {
 
 
     // Валидность Id
-
     private Boolean isValidId(Long id) {
         return id != null &&
                 id > 0;
 
+    }
+
+
+    // Расчёт уровня персонажа
+    // Реализация под большим вопросом
+    private Integer calculateLevel(Integer exp) {
+        return  (int) ((Math.sqrt(2500 + 200 * exp) - 50) / 100);
+    }
+
+
+    // Расчёт того, сколько осталось до следующего уровня
+    private Integer calculateUntilNextLevel (Integer lvl, Integer exp) {
+        return 50 * (lvl + 1) * (lvl + 2) - exp;
+    }
+
+
+
+    // Валидность данных при создании игрока
+    private Boolean isValidDataCreatePlayer(Player player) {
+
+        if (player.getName() == null
+                || player.getName().equals("")
+                || player.getName().length() > 12
+                || player.getTitle() == null
+                || player.getTitle().length() > 30
+                || player.getRace() == null
+                || player.getProfession() == null
+                || player.getBirthday() == null
+                || player.getBirthday().getTime() < 0
+                || player.getExperience() == null
+                || player.getExperience() < 0
+                || player.getExperience() > 10_000_000) return false;
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(player.getBirthday());
+        int year = calendar.get(Calendar.YEAR);
+
+        return year >= 2000 && year <= 3000;
     }
 }

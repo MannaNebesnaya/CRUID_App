@@ -5,6 +5,7 @@ import com.game.entity.Player;
 import com.game.entity.Profession;
 import com.game.entity.Race;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
@@ -15,15 +16,16 @@ import java.util.List;
  */
 
 public interface PlayerService {
-//    Получить отсортированный список игроков
 
     List<Player> getAllSortedPlayer(String name, String title, Race race, Profession profession,
                                     Long after, Long before, Boolean banned, Integer minExperience,
                                     Integer maxExperience, Integer minLevel, Integer maxLevel);
 
 
-    // Получить игрока по id
+    Player createPlayer(@RequestBody Player newPlayer);
+
     Player getPlayer(@PathVariable Long id);
+
 
     List<Player> ApplyFilterListPlayer(List<Player> playerList,PlayerOrder order,
                                        Integer pageNumber, Integer pageSize);
