@@ -37,7 +37,10 @@ public class PlayerController {
                                            @RequestParam(required = false) Integer pageNumber,
                                            @RequestParam(required = false) Integer pageSize) {
 
-        return playerService.getAllSortedPlayer();
+       List<Player> allPlayerList = playerService.getAllSortedPlayer(name, title, race, profession, after, before, banned, minExperience,
+                maxExperience, minLevel, maxLevel, order, pageNumber, pageSize);
+
+        return allPlayerList;
     }
 
     @GetMapping("/count")
@@ -59,9 +62,7 @@ public class PlayerController {
 
     @GetMapping("/{id}")
     public Player getPlayer(@PathVariable Long id) {
-
-
-        return null;
+        return playerService.getPlayer(id);
     }
 
     @PostMapping
