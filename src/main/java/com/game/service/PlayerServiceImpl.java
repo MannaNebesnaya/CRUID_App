@@ -116,9 +116,6 @@ public class PlayerServiceImpl implements PlayerService {
 
     @Override
     public Player updatePlayer(Player updatePlayer, Long id) {
-//        if (!isValidId(id)) throw new BadRequestException();
-//
-//        if (!playerRepository.existsById(id)) throw new NotFoundException();
         Player editPlayer = getPlayer(id);
 
         String name = updatePlayer.getName();
@@ -152,7 +149,7 @@ public class PlayerServiceImpl implements PlayerService {
             calendar.setTime(updatePlayer.getBirthday());
             int year = calendar.get(Calendar.YEAR);
 
-            if (2000 > year || year > 3000 /*|| birthday.getTime() < 0*/) throw new BadRequestException();
+            if (2000 > year || year > 3000) throw new BadRequestException();
 
             editPlayer.setBirthday(updatePlayer.getBirthday());
         }
@@ -161,7 +158,7 @@ public class PlayerServiceImpl implements PlayerService {
         if (banned != null) {
             editPlayer.setBanned(banned);
         }
-// Возможно тут проблемы
+
         Integer exp = updatePlayer.getExperience();
         if (exp != null) {
             if (exp < 0 || exp > 10_000_000) throw new BadRequestException();
