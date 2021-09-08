@@ -115,6 +115,68 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
+    public Player updatePlayer(Player updatePlayer, Long id) {
+//        if (!isValidId(id)) throw new BadRequestException();
+//
+//        if (!playerRepository.existsById(id)) throw new NotFoundException();
+        Player editPlayer = getPlayer(id);
+
+        String name = updatePlayer.getName();
+        if (name != null) {
+            if (name.equals("") || name.length() > 12) throw new BadRequestException();
+
+            editPlayer.setName(name);
+        }
+
+        String title = updatePlayer.getTitle();
+        if (title != null) {
+            if (title.length() > 30) throw new BadRequestException();
+
+            editPlayer.setTitle(title);
+        }
+
+        Race race = updatePlayer.getRace();
+        if (race != null) {
+            editPlayer.setRace(race);
+        }
+
+        Profession profession = updatePlayer.getProfession();
+        if (profession != null) {
+            editPlayer.setProfession(profession);
+        }
+
+
+        if (updatePlayer.getBirthday() != null) {
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(updatePlayer.getBirthday());
+            int year = calendar.get(Calendar.YEAR);
+
+            if (2000 > year || year > 3000 /*|| birthday.getTime() < 0*/) throw new BadRequestException();
+
+            editPlayer.setBirthday(updatePlayer.getBirthday());
+        }
+
+        Boolean banned = updatePlayer.getBanned();
+        if (banned != null) {
+            editPlayer.setBanned(banned);
+        }
+// Возможно тут проблемы
+        Integer exp = updatePlayer.getExperience();
+        if (exp != null) {
+            if (exp < 0 || exp > 10_000_000) throw new BadRequestException();
+
+            editPlayer.setExperience(exp);
+
+            editPlayer.setLevel(calculateLevel(editPlayer.getExperience()));
+            editPlayer.setUntilNextLevel(calculateUntilNextLevel(editPlayer.getLevel(),
+                    editPlayer.getExperience()));
+        }
+
+        return editPlayer;
+    }
+
+    @Override
     public Player getPlayer(Long id) {
 
         if (!isValidId(id)) throw new BadRequestException();
@@ -172,24 +234,21 @@ public class PlayerServiceImpl implements PlayerService {
 
     // Валидность Id
     private Boolean isValidId(Long id) {
-        return id != null &&
-                id > 0;
-
+        return id != null && id > 0;
     }
 
 
     // Расчёт уровня персонажа
     // Реализация под большим вопросом
     private Integer calculateLevel(Integer exp) {
-        return  (int) ((Math.sqrt(2500 + 200 * exp) - 50) / 100);
+        return (int) ((Math.sqrt(2500 + 200 * exp) - 50) / 100);
     }
 
 
     // Расчёт того, сколько осталось до следующего уровня
-    private Integer calculateUntilNextLevel (Integer lvl, Integer exp) {
+    private Integer calculateUntilNextLevel(Integer lvl, Integer exp) {
         return 50 * (lvl + 1) * (lvl + 2) - exp;
     }
-
 
 
     // Валидность данных при создании игрока

@@ -14,7 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/rest/players")
 public class PlayerController {
-    private PlayerServiceImpl playerService;
+    private final PlayerServiceImpl playerService;
 
     @Autowired
     public PlayerController(PlayerServiceImpl playerService) {
@@ -74,8 +74,8 @@ public class PlayerController {
 
     @PostMapping("/{id}")
     @ResponseBody
-    public Player updatePlayer(@RequestParam Player updatePlayer,  @PathVariable Long id ) {
-        return null;
+    public Player updatePlayer(@RequestBody Player updatePlayer,  @PathVariable Long id ) {
+        return playerService.updatePlayer(updatePlayer, id);
     }
 
     @DeleteMapping("/{id}")

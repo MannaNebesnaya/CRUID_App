@@ -6,6 +6,7 @@ import com.game.entity.Profession;
 import com.game.entity.Race;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -22,16 +23,18 @@ public interface PlayerService {
                                     Integer maxExperience, Integer minLevel, Integer maxLevel);
 
 
-    Player createPlayer(@RequestBody Player newPlayer);
+    Player createPlayer(Player newPlayer);
 
-    Player getPlayer(@PathVariable Long id);
+    Player updatePlayer(Player updatePlayer, Long id);
 
 
-    List<Player> ApplyFilterListPlayer(List<Player> playerList,PlayerOrder order,
+    Player getPlayer(Long id);
+
+
+    List<Player> ApplyFilterListPlayer(List<Player> playerList, PlayerOrder order,
                                        Integer pageNumber, Integer pageSize);
 
     void deletePlayer(Long id);
-
 
 
 }
