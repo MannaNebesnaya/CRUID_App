@@ -1,4 +1,4 @@
-# CRUID_Test
+# CRUID_App
 
 #### Автор: А.Шевченко
 #### E-mail: dozory4@gmail.com
